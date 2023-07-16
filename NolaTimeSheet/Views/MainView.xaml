@@ -10,19 +10,17 @@
     d:DesignHeight="500" 
     d:DesignWidth="500">
 
-    <UserControl.DataContext>
-        <viewModels:MainViewModel/>
-    </UserControl.DataContext>
-
     <dxmvvm:Interaction.Behaviors>
-        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding FetchProjectCommand}"/>
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding FetchUserCommand}"/>
     </dxmvvm:Interaction.Behaviors>
 
     <Grid>
         <ComboBox Width="160" 
-                  ItemsSource="{Binding ProjectsVm}"
-                  DisplayMemberPath="Name" 
-                  SelectionChanged="ProjectOnChange" 
-                  Height="25"/>
+                  ItemsSource="{Binding AppUsers}"
+                  DisplayMemberPath="UserName" 
+                  SelectedValuePath="Id"
+                  SelectionChanged="UserOnChange" 
+                  Height="25" Margin="162,56,178,419" Text="Select a User"/>
+        <Label Content="NOLA Timesheet Entries" HorizontalAlignment="Center" Margin="0,20,0,0" VerticalAlignment="Top" Width="326" HorizontalContentAlignment="Center" FontFamily="Arial Black" FontSize="22"/>
     </Grid>
 </UserControl>

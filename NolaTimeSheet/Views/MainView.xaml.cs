@@ -24,16 +24,16 @@ namespace NolaTimeSheet.Views
             DataContext = App.ServiceProvider.GetRequiredService<MainViewModel>();
         }
 
-        private void ProjectOnChange(object sender, SelectionChangedEventArgs e)
+        private void UserOnChange(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
             // Ensure the selected value is not null
             if (comboBox.SelectedItem != null)
             {
                 // Cast the selected item back to ProjectViewModel
-                var selectedProject = comboBox.SelectedItem as ProjectViewModel;
+                var selectedUser = comboBox.SelectedItem as UserViewModel;
                 // You can access the values from this selectedProject object.
-                Debug.WriteLine($"Selected Project Id: {selectedProject.Id}, Name: {selectedProject.Name}");
+                Debug.WriteLine($"Selected User Id: {selectedUser.Id}, Name: {selectedUser.UserName}");
             }
         }
     }

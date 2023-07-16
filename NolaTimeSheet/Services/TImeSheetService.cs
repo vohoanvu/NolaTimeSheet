@@ -1,0 +1,97 @@
+﻿using Microsoft.EntityFrameworkCore;
+using NolaTimeSheet.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NolaTimeSheet.Models;
+using NolaTimeSheet.ViewModels;
+using DevExpress.Pdf.Native.BouncyCastle.Asn1.Ocsp;
+
+namespace NolaTimeSheet.Services
+{
+    public class TimeSheetService : ITimeSheetService
+    {
+        private readonly ApplicationDbContext _context;
+
+        public TimeSheetService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Time>> GetAllTimeEntries()
+        {
+            return await _context.Times.ToListAsync();
+        }
+
+        public async Task<List<Time>> GetTimeEntriesByUserId(string userId)
+        {
+            return await _context.Times
+                .Where(t => t.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Time>> GetTimeEntriesByProjectId(int projectId)
+        {
+            return await _context.Times
+                .Where(t => t.ProjectId == projectId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Time>> GetTimeEntriesByUserProject(int projectId, string userId)
+        {
+            return await _context.Times
+                .Where(t => t.ProjectId == projectId && t.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<Time> CreateNewTimeEntry(Time time)
+        {
+            _context.Times.Add(time);
+            await _context.SaveChangesAsync();
+            return time;
+        }
+
+        public async Task<Time> UpdateTimeEntry(Time time)
+        {
+            _context.Entry(time).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return time;
+        }
+
+        public async Task<bool> DeleteTimeEntry(Time time)
+        {
+            _context.Times.Remove(time);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> CloseTimeEntry(Time time)
+        {
+            time.Closed = true;
+            await UpdateTimeEntry(time);
+            return true;
+        }
+
+        public async Task<List<Time>> FilterTimeSheet(TimeSheetFilterViewModel filter)
+        {
+            var times = await _context.Times.Where(t => t.Closed
+                                                        && (filter.UserId == null || t.UserId == filter.UserId)
+                                                        && (filter.ProjectId == null || t.ProjectId == filter.ProjectId))
+            .Include(t => t.Project).ToListAsync();
+
+            if (filter.StartDate != DateTime.MinValue)
+            {
+                times = times.Where(t => t.WorkingDate >= filter.StartDate).ToList();
+            }
+
+            if (filter.EndDate != DateTime.MaxValue)
+            {
+                times = times.Where(t => t.WorkingDate <= filter.EndDate).ToList();
+            }
+
+            return times;
+        }
+    }
+}

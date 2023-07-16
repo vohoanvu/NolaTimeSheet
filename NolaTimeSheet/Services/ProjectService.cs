@@ -1,8 +1,12 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using NolaTimeSheet.Data;
+using NolaTimeSheet.Models;
 using NolaTimeSheet.ViewModels;
+using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NolaTimeSheet.Services
@@ -27,6 +31,15 @@ namespace NolaTimeSheet.Services
             }
 
             return result;
+        }
+
+        public async Task<List<Project>> GetProjectByUserId(Guid userId)
+        {
+            var projects = await _context.AspNetUserProjects
+                .Where(up => up.UserId == userId.ToString() && !up.Project.Closed)
+                .Select(up => up.Project).ToListAsync();
+
+            return projects;
         }
     }
 }

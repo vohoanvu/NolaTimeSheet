@@ -17,6 +17,8 @@ namespace NolaTimeSheet.Configuration
                     ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString));
 
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITimeSheetService, TimeSheetService>();
             services.AddTransient<MainViewModel>();
 
             return services;
