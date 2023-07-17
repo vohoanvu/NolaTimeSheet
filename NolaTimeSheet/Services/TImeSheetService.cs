@@ -93,5 +93,12 @@ namespace NolaTimeSheet.Services
 
             return times;
         }
+
+        public async Task UpdateTimeEntryByField(Time time, string propertyName)
+        {
+            var entry = _context.Entry(time);
+            entry.Property(propertyName).IsModified = true;
+            await _context.SaveChangesAsync();
+        }
     }
 }

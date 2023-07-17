@@ -10,6 +10,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using DevExpress.Xpf.Grid;
 
 namespace NolaTimeSheet.Views
 {
@@ -24,17 +26,41 @@ namespace NolaTimeSheet.Views
             DataContext = App.ServiceProvider.GetRequiredService<MainViewModel>();
         }
 
-        private void UserOnChange(object sender, SelectionChangedEventArgs e)
+        private async void UserOnChange(object sender, SelectionChangedEventArgs e)
         {
             var comboBox = sender as ComboBox;
             // Ensure the selected value is not null
-            if (comboBox.SelectedItem != null)
+            if (comboBox!.SelectedItem != null)
             {
-                // Cast the selected item back to ProjectViewModel
                 var selectedUser = comboBox.SelectedItem as UserViewModel;
-                // You can access the values from this selectedProject object.
-                Debug.WriteLine($"Selected User Id: {selectedUser.Id}, Name: {selectedUser.UserName}");
+                var mainViewModel = (DataContext as MainViewModel);
+                await mainViewModel!.FetchEditableTimeEntries(selectedUser!.Id);
             }
+        }
+
+        private void view_ValidateRow(object sender, GridRowValidationEventArgs e)
+        {
+            var viewModel = (MainViewModel)DataContext;
+            var timeVm = (TimeViewModel)e.Row;
+            //var updateTimeRequest = new TimeViewModel()
+            //{
+            //    Description = Row.Description,
+            //    UserId = Row.UserId,
+            //    Hours = Row.Hours,
+            //    WorkingDate = Row.WorkingDate,
+            //    Reference = Row.Reference,
+            //    ProjectId = Row.ProjectId
+            //};
+            if (timeVm != null)
+            {
+                viewModel.UpdateTimeEntryCommand.Execute(timeVm);
+                e.Handled = true;
+            }
+        }
+
+        private void view_InvalidRowException(object sender, InvalidRowExceptionEventArgs e)
+        {
+            e.ExceptionMode = ExceptionMode.NoAction;
         }
     }
 }

@@ -26,6 +26,10 @@ namespace NolaTimeSheet.ViewModels
         public int ProjectId { get; set; }
 
 
+        public TimeViewModel()
+        {
+        }
+
         public TimeViewModel(Time timeEntry)
         {
             Id = timeEntry.Id;

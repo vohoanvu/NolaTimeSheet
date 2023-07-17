@@ -21,6 +21,8 @@ namespace NolaTimeSheet.Services
 
         Task<Time> UpdateTimeEntry(Time time);
 
+        Task UpdateTimeEntryByField(Time time, string propertyName);
+
         Task<bool> DeleteTimeEntry(Time time);
 
         Task<bool> CloseTimeEntry(Time time);
