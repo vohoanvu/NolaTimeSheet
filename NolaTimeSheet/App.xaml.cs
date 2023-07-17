@@ -16,7 +16,8 @@ namespace NolaTimeSheet
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            base.OnStartup(e); 
+            DevExpress.Xpf.Core.ApplicationThemeHelper.ApplicationThemeName = "Win11Dark";
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
 

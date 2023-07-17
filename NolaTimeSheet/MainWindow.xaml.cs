@@ -22,23 +22,6 @@ namespace NolaTimeSheet
         public MainWindow()
         {
             InitializeComponent();
-            //using var context = new DbContextFactory().CreateDbContext();
-            //try
-            //{
-            //    context.Database.Migrate();  // Ensures that the database and schema is uptodate
-
-            //    // Try to query the first Project from the database.
-            //    var firstProject = context.Projects.FirstOrDefault();
-
-            //    if (firstProject != null)
-            //        MessageBox.Show("Data connection test successful.");
-            //    else
-            //        MessageBox.Show("Data connection test successful but the database is empty.");
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Data connection test failed: {ex.Message}");
-            //}
         }
     }
 }

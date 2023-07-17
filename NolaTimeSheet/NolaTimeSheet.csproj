@@ -32,6 +32,9 @@
     <Reference Include="DevExpress.Xpf.Grid.v23.1.Core">
       <HintPath>..\..\..\..\Program Files\DevExpress 23.1\Components\Bin\NetCore\DevExpress.Xpf.Grid.v23.1.Core.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.Xpf.Themes.Win11Dark.v23.1">
+      <HintPath>..\..\..\..\Program Files\DevExpress 23.1\Components\Bin\NetCore\DevExpress.Xpf.Themes.Win11Dark.v23.1.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
