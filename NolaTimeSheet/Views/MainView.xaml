@@ -9,8 +9,8 @@
     xmlns:viewModels="clr-namespace:NolaTimeSheet.ViewModels"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
     mc:Ignorable="d" 
-    d:DesignHeight="500"
-    d:DesignWidth="500">
+    d:DesignHeight="300"
+    d:DesignWidth="300">
 
     <dxmvvm:Interaction.Behaviors>
         <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding FetchUserCommand}"/>
@@ -28,7 +28,8 @@
                       ItemsSource="{Binding AppUsers}" 
                       DisplayMemberPath="UserName" 
                       SelectedValuePath="Id"
-                      Height="25" Text="Select a User">
+                      SelectedValue="{Binding SelectedUserId}"
+                      Height="25" Text="Select a NOLA user here">
                 <dxmvvm:Interaction.Behaviors>
                     <dxmvvm:EventToCommand EventName="SelectionChanged"
                                Command="{Binding FetchUserTimeSheetCommand}" 
@@ -67,18 +68,30 @@
 
 
             <dxg:GridControl.Columns>
-                <dxg:GridColumn Header="Project" FieldName="ProjectId" Width="100" >
+                <dxg:GridColumn Header="Project" FieldName="ProjectId" Width="30" >
                     <dxg:GridColumn.EditSettings>
-                        <dxe:ComboBoxEditSettings ItemsSource="{Binding ProjectsVm}"
-                                                  DisplayMember="Name" 
-                                                  ValueMember="Id" />
+                        <dxe:ComboBoxEditSettings 
+                            x:Name="ProjectSelectionBox"
+                            ItemsSource="{Binding ProjectsVm}" 
+                            DisplayMember="Name" ValueMember="Id">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="SelectionChanged"
+                                                       Command="{Binding DataContext.ProjectSelectionChangedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                       CommandParameter="{Binding ElementName=ProjectSelectionBox, Path=ValueMember}" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:ComboBoxEditSettings>
                     </dxg:GridColumn.EditSettings>
                 </dxg:GridColumn>
 
-                <dxg:GridColumn Header="Description" FieldName="Description" Width="100" />
-                <dxg:GridColumn Header="Hours" FieldName="Hours" Width="100" />
-                <dxg:GridColumn Header="Date" FieldName="WorkingDate" Width="100" />
-                <dxg:GridColumn Header="Reference" FieldName="Reference" Width="50" />
+                <dxg:GridColumn Header="Description" FieldName="Description" Width="100">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:MemoEditSettings ShowIcon="False"/>
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+
+                <dxg:GridColumn Header="Hours" FieldName="Hours" Width="25" />
+                <dxg:GridColumn Header="Date" FieldName="WorkingDate" Width="25" />
+                <dxg:GridColumn Header="Reference" FieldName="Reference" Width="25" />
             </dxg:GridControl.Columns>
 
         </dxg:GridControl>

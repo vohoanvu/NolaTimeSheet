@@ -2,6 +2,7 @@
 using NolaTimeSheet.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using NolaTimeSheet.Models;
@@ -53,9 +54,17 @@ namespace NolaTimeSheet.Services
 
         public async Task<Time> CreateNewTimeEntry(Time time)
         {
-            _context.Times.Add(time);
-            await _context.SaveChangesAsync();
-            return time;
+            try
+            {
+                _context.Times.Add(time);
+                await _context.SaveChangesAsync();
+                return time;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($" Vu Debug:... {e}");
+                throw;
+            }
         }
 
         public async Task<Time> UpdateTimeEntry(Time time)

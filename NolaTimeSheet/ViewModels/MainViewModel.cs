@@ -17,7 +17,12 @@ namespace NolaTimeSheet.ViewModels
         private readonly IUserService _userService;
 
         [GenerateProperty] private string _status;
-        //[GenerateProperty] private string _userId;
+        [GenerateProperty] private string _userId;
+        public string SelectedUserId
+        {
+            get => _userId;
+            set => _userId = value;
+        }
 
         public MainViewModel()
         {
@@ -62,22 +67,14 @@ namespace NolaTimeSheet.ViewModels
         [GenerateCommand(Name = "FetchUserTimeSheetCommand")]
         public async Task FetchEditableTimeEntries(string userId)
         {
-            try
+            Times.Clear();
+            var times = await _timeSheetService.GetEditableTimeSheetByUserId(userId);
+            foreach (var time in times)
             {
-                Times.Clear();
-                var times = await _timeSheetService.GetEditableTimeSheetByUserId(userId);
-                foreach (var time in times)
-                {
-                    Times.Add(new TimeViewModel(time));
-                }
+                Times.Add(new TimeViewModel(time));
+            }
 
-                await FetchProjectByUser(userId);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine($"Vu debug../ {e}");
-                throw;
-            }
+            await FetchProjectByUser(userId);
         }
 
         [GenerateCommand(Name = "FetchReportTimeSheetCommand")]
@@ -96,18 +93,44 @@ namespace NolaTimeSheet.ViewModels
         {
             var createTime = new Time
             {
-                Description = "",
-                UserId = "", // Set this to the ID of the currently selected user
+                Id = 0, //important! indicating new Time Entry
+                Description = "Enter a description for your task",
+                UserId = SelectedUserId,
                 Hours = 0,
                 WorkingDate = DateTime.Now,
                 Reference = "",
                 Closed = false,
                 Paid = false,
-                ProjectId = 0 // Set this to the ID of the default project, if any
+                ProjectId = 0 
             };
+
             Times.Insert(0, new TimeViewModel(createTime));
         }
 
+        [GenerateCommand(Name = "ProjectSelectionChangedCommand")]
+        public async Task ProjectSelectionChanged(TimeViewModel input)
+        {
+            if (input.Id == 0)
+            {
+                // This is a new time entry that hasn't been inserted into the database yet
+                var createTime = new Time
+                {
+                    Description = input.Description,
+                    UserId = input.UserId,
+                    Hours = input.Hours,
+                    WorkingDate = input.WorkingDate,
+                    Reference = input.Reference,
+                    Closed = false,
+                    Paid = false,
+                    ProjectId = input.ProjectId
+                };
+
+                var newEntry = await _timeSheetService.CreateNewTimeEntry(createTime);
+
+                // Update the Id of the TimeViewModel object to match the Id of the newly inserted Time entry
+                input.Id = newEntry.Id;
+            }
+        }
 
         [GenerateCommand(Name="UpdateTimeEntryCommand")]
         public async Task UpdateTimeEntry(TimeViewModel input)
