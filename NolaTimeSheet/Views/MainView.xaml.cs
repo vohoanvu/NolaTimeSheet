@@ -26,41 +26,35 @@ namespace NolaTimeSheet.Views
             DataContext = App.ServiceProvider.GetRequiredService<MainViewModel>();
         }
 
-        private async void UserOnChange(object sender, SelectionChangedEventArgs e)
-        {
-            var comboBox = sender as ComboBox;
-            // Ensure the selected value is not null
-            if (comboBox!.SelectedItem != null)
-            {
-                var selectedUser = comboBox.SelectedItem as UserViewModel;
-                var mainViewModel = (DataContext as MainViewModel);
-                await mainViewModel!.FetchEditableTimeEntries(selectedUser!.Id);
-            }
-        }
+        //private async void UserOnChange(object sender, SelectionChangedEventArgs e)
+        //{
+        //    var comboBox = sender as ComboBox;
+        //    // Ensure the selected value is not null
+        //    if (comboBox!.SelectedItem != null)
+        //    {
+        //        var selectedUser = comboBox.SelectedItem as UserViewModel;
+        //        var mainViewModel = (DataContext as MainViewModel);
+        //        await mainViewModel!.FetchEditableTimeEntries(selectedUser!.Id);
+        //    }
+        //}
 
-        private void view_ValidateRow(object sender, GridRowValidationEventArgs e)
-        {
-            var viewModel = (MainViewModel)DataContext;
-            var timeVm = (TimeViewModel)e.Row;
-            //var updateTimeRequest = new TimeViewModel()
-            //{
-            //    Description = Row.Description,
-            //    UserId = Row.UserId,
-            //    Hours = Row.Hours,
-            //    WorkingDate = Row.WorkingDate,
-            //    Reference = Row.Reference,
-            //    ProjectId = Row.ProjectId
-            //};
-            if (timeVm != null)
-            {
-                viewModel.UpdateTimeEntryCommand.Execute(timeVm);
-                e.Handled = true;
-            }
-        }
+        //private void RowValidationHandler(object sender, GridRowValidationEventArgs e)
+        //{
+        //    var viewModel = (MainViewModel)DataContext;
+        //    var timeVm = (TimeViewModel)e.Row;
+        //    //Custom row validation logic here...
 
-        private void view_InvalidRowException(object sender, InvalidRowExceptionEventArgs e)
-        {
-            e.ExceptionMode = ExceptionMode.NoAction;
-        }
+        //    if (timeVm != null)
+        //    {
+        //        //viewModel.UpdateTimeEntryCommand.Execute(timeVm);
+        //        //e.Handled = true;
+        //        e.IsValid = true;
+        //    }
+        //}
+
+        //private void InvalidRowExceptionHandler(object sender, InvalidRowExceptionEventArgs e)
+        //{
+        //    e.ExceptionMode = ExceptionMode.NoAction;
+        //}
     }
 }

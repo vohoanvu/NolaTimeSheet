@@ -1,29 +1,117 @@
 ﻿using System;
+using System.ComponentModel;
 using DevExpress.Mvvm.CodeGenerators;
 using NolaTimeSheet.Models;
 
 namespace NolaTimeSheet.ViewModels
 {
-    [GenerateViewModel]
-    public partial class TimeViewModel
+    public class TimeViewModel : INotifyPropertyChanged
     {
-        public long Id { get; set; }
+        private long _id;
+        private string _userId;
+        private int _projectId;
+        private string _description;
+        private decimal _hours;
+        private DateTime _workingDate;
+        private string _reference;
 
-        public string UserId { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public string Description { get; set; }
+        public long Id
+        {
+            get => _id;
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
 
-        public decimal Hours { get; set; }
+        public string UserId
+        {
+            get => _userId;
+            set
+            {
+                if (_userId != value)
+                {
+                    _userId = value;
+                    OnPropertyChanged(nameof(UserId));
+                }
+            }
+        }
 
-        public DateTime WorkingDate { get; set; }
+        public int ProjectId
+        {
+            get => _projectId;
+            set
+            {
+                if (_projectId != value)
+                {
+                    _projectId = value;
+                    OnPropertyChanged(nameof(ProjectId));
+                }
+            }
+        }
 
-        public string Reference { get; set; }
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    OnPropertyChanged(nameof(Description));
+                }
+            }
+        }
 
-        public bool Closed { get; set; }
+        public decimal Hours
+        {
+            get => _hours;
+            set
+            {
+                if (_hours != value)
+                {
+                    _hours = value;
+                    OnPropertyChanged(nameof(Hours));
+                }
+            }
+        }
 
-        public bool Paid { get; set; }
+        public DateTime WorkingDate
+        {
+            get => _workingDate;
+            set
+            {
+                if (_workingDate != value)
+                {
+                    _workingDate = value;
+                    OnPropertyChanged(nameof(WorkingDate));
+                }
+            }
+        }
 
-        public int ProjectId { get; set; }
+        public string Reference
+        {
+            get => _reference;
+            set
+            {
+                if (_reference != value)
+                {
+                    _reference = value;
+                    OnPropertyChanged(nameof(Reference));
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
 
         public TimeViewModel()
@@ -37,8 +125,6 @@ namespace NolaTimeSheet.ViewModels
             Description = timeEntry.Description;
             Hours = timeEntry.Hours;
             Reference = timeEntry.Reference;
-            Paid = timeEntry.Paid;
-            Closed = timeEntry.Closed;
             WorkingDate = timeEntry.WorkingDate;
             ProjectId = timeEntry.ProjectId;
         }

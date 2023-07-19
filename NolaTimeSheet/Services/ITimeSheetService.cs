@@ -11,6 +11,8 @@ namespace NolaTimeSheet.Services
 
         Task<List<Time>> GetTimeEntriesByUserId(string userId);
 
+        Task<List<Time>> GetEditableTimeSheetByUserId(string userId);
+
         Task<List<Time>> GetTimeEntriesByProjectId(int projectId);
 
         Task<List<Time>> GetTimeEntriesByUserProject(int projectId, string userId);

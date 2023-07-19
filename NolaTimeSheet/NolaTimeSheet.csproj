@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="DevExpress.Mvvm.v23.1">
+      <HintPath>..\..\..\..\Program Files\DevExpress 23.1\Components\Bin\NetCore\DevExpress.Mvvm.v23.1.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.Xpf.Core.v23.1">
       <HintPath>..\..\..\..\Program Files\DevExpress 23.1\Components\Bin\NetCore\DevExpress.Xpf.Core.v23.1.dll</HintPath>
     </Reference>

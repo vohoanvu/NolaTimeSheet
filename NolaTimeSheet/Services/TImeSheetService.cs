@@ -3,11 +3,9 @@ using NolaTimeSheet.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NolaTimeSheet.Models;
 using NolaTimeSheet.ViewModels;
-using DevExpress.Pdf.Native.BouncyCastle.Asn1.Ocsp;
 
 namespace NolaTimeSheet.Services
 {
@@ -29,6 +27,13 @@ namespace NolaTimeSheet.Services
         {
             return await _context.Times
                 .Where(t => t.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Time>> GetEditableTimeSheetByUserId(string userId)
+        {
+            return await _context.Times
+                .Where(t => t.UserId == userId && !t.Closed)
                 .ToListAsync();
         }
 
@@ -55,10 +60,20 @@ namespace NolaTimeSheet.Services
 
         public async Task<Time> UpdateTimeEntry(Time time)
         {
-            _context.Entry(time).State = EntityState.Modified;
+            var existingTime = _context.Times.Local.FirstOrDefault(t => t.Id == time.Id);
+            if (existingTime != null)
+            {
+                _context.Entry(existingTime).CurrentValues.SetValues(time);
+            }
+            else
+            {
+                _context.Times.Attach(time);
+                _context.Entry(time).State = EntityState.Modified;
+            }
             await _context.SaveChangesAsync();
             return time;
         }
+
 
         public async Task<bool> DeleteTimeEntry(Time time)
         {

@@ -1,11 +1,11 @@
 ﻿using System;
 using DevExpress.Mvvm.CodeGenerators;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using NolaTimeSheet.Models;
 using NolaTimeSheet.Services;
 using System.Linq;
-using System.Reflection;
 
 namespace NolaTimeSheet.ViewModels
 {
@@ -51,6 +51,7 @@ namespace NolaTimeSheet.ViewModels
         [GenerateCommand(Name = "FetchProjectCommand")]
         public async Task FetchProjectByUser(string userId)
         {
+            ProjectsVm.Clear();
             var projects = await _projectService.GetProjectByUserId(Guid.Parse(userId));
             foreach (var project in projects)
             {
@@ -61,17 +62,25 @@ namespace NolaTimeSheet.ViewModels
         [GenerateCommand(Name = "FetchUserTimeSheetCommand")]
         public async Task FetchEditableTimeEntries(string userId)
         {
-            Times.Clear();
-            var times = await _timeSheetService.GetTimeEntriesByUserId(userId);
-            foreach (var time in times)
+            try
             {
-                Times.Add(new TimeViewModel(time));
-            }
+                Times.Clear();
+                var times = await _timeSheetService.GetEditableTimeSheetByUserId(userId);
+                foreach (var time in times)
+                {
+                    Times.Add(new TimeViewModel(time));
+                }
 
-            await FetchProjectByUser(userId);
+                await FetchProjectByUser(userId);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Vu debug../ {e}");
+                throw;
+            }
         }
 
-        [GenerateCommand]
+        [GenerateCommand(Name = "FetchReportTimeSheetCommand")]
         public async Task FetchReportTimeEntries()
         {
             var times = await _timeSheetService.GetAllTimeEntries();
@@ -83,21 +92,22 @@ namespace NolaTimeSheet.ViewModels
         }
 
         [GenerateCommand(Name = "CreateNewEntryCommand")]
-        public void CreateNewTimeEntry(TimeViewModel createTime)
+        public void CreateNewTimeEntry()
         {
-            var postTimeRequest = new Time()
+            var createTime = new Time
             {
-                Id = createTime.Id,
-                Description = createTime.Description,
-                UserId = createTime.UserId,
-                Hours = createTime.Hours,
-                WorkingDate = createTime.WorkingDate,
-                Reference = createTime.Reference,
-                Closed = createTime.Closed,
-                Paid = createTime.Paid,
-                ProjectId = createTime.ProjectId
+                Description = "",
+                UserId = "", // Set this to the ID of the currently selected user
+                Hours = 0,
+                WorkingDate = DateTime.Now,
+                Reference = "",
+                Closed = false,
+                Paid = false,
+                ProjectId = 0 // Set this to the ID of the default project, if any
             };
+            Times.Insert(0, new TimeViewModel(createTime));
         }
+
 
         [GenerateCommand(Name="UpdateTimeEntryCommand")]
         public async Task UpdateTimeEntry(TimeViewModel input)
@@ -110,18 +120,17 @@ namespace NolaTimeSheet.ViewModels
                 Hours = input.Hours,
                 WorkingDate = input.WorkingDate,
                 Reference = input.Reference,
-                Closed = input.Closed,
-                Paid = input.Paid,
                 ProjectId = input.ProjectId
             };
 
             var updatedTime = await _timeSheetService.UpdateTimeEntry(updatingTime);
 
-            //fetching updated rows back to Times observablecollection.
-            Times = new ObservableCollection<TimeViewModel>(Times.Where(x => x.Id != updatedTime.Id))
+            var existingTimeEntryView = Times.FirstOrDefault(x => x.Id == updatedTime.Id);
+            if (existingTimeEntryView != null)
             {
-                new TimeViewModel(updatedTime)
-            };
+                Times.Remove(existingTimeEntryView);
+            }
+            Times.Add(new TimeViewModel(updatedTime));
         }
     }
 }

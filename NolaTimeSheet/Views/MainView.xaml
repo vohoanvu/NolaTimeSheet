@@ -16,51 +16,57 @@
         <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding FetchUserCommand}"/>
     </dxmvvm:Interaction.Behaviors>
 
-    <Grid>
+    <Grid RenderTransformOrigin="0.5,0.3">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <dxmvvm:Interaction.Behaviors>
-                <dxmvvm:EventToCommand EventName="SelectionChanged"
-                                        Command="{Binding FetchUserTimeSheetCommand}" 
-                                        CommandParameter="{Binding ElementName=UsersComboBox, Path=SelectedValue}" />
-            </dxmvvm:Interaction.Behaviors>
-
             <ComboBox Width="160" Name="UsersComboBox"
                       ItemsSource="{Binding AppUsers}" 
                       DisplayMemberPath="UserName" 
                       SelectedValuePath="Id"
-                      SelectionChanged="UserOnChange"
-                      Height="25" Text="Select a User"/>
+                      Height="25" Text="Select a User">
+                <dxmvvm:Interaction.Behaviors>
+                    <dxmvvm:EventToCommand EventName="SelectionChanged"
+                               Command="{Binding FetchUserTimeSheetCommand}" 
+                               CommandParameter="{Binding ElementName=UsersComboBox, Path=SelectedValue}" />
+                </dxmvvm:Interaction.Behaviors>
+            </ComboBox>
 
             <Label Content="NOLA Timesheet Entries" Height="33" Margin="10,0,0,0"
                    HorizontalContentAlignment="Center" FontFamily="Arial Black" FontSize="22"/>
         </StackPanel>
 
+        <Button Grid.Row="1" 
+                Content="Add New Entry" 
+                Command="{Binding CreateNewEntryCommand}" 
+                Height="30" Margin="0,5,0,5" />
+
         <dxg:GridControl 
             x:Name="TimeEntriesGrid" 
             ItemsSource="{Binding Times}" 
-            Grid.Row="1">
+            Grid.Row="2">
 
             <dxg:GridControl.View>
                 <dxg:TableView 
-                    x:Name="TimeSheet" 
+                    x:Name="EditableTimeSheet" 
                     AutoWidth="True" 
                     ShowGroupPanel="False" 
-                    AllowEditing="True"
-                    ValidateRow="view_ValidateRow" 
-                    InvalidRowException="view_InvalidRowException" >
+                    AllowEditing="True">
                     <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:UIObjectService/>
+                        <dxmvvm:EventToCommand 
+                            EventName="RowUpdated" 
+                            Command="{Binding UpdateTimeEntryCommand}" 
+                            CommandParameter="{Binding ElementName=TimeEntriesGrid, Path=CurrentItem}" />
                     </dxmvvm:Interaction.Behaviors>
                 </dxg:TableView>
             </dxg:GridControl.View>
 
-            <dxg:GridControl.Columns>
 
+            <dxg:GridControl.Columns>
                 <dxg:GridColumn Header="Project" FieldName="ProjectId" Width="100" >
                     <dxg:GridColumn.EditSettings>
                         <dxe:ComboBoxEditSettings ItemsSource="{Binding ProjectsVm}"
