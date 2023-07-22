@@ -92,6 +92,18 @@
                 <dxg:GridColumn Header="Hours" FieldName="Hours" Width="25" />
                 <dxg:GridColumn Header="Date" FieldName="WorkingDate" Width="25" />
                 <dxg:GridColumn Header="Reference" FieldName="Reference" Width="25" />
+
+                <dxg:GridColumn Header="Actions" Width="30">
+                    <dxg:GridColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button 
+                                Content="Delete" 
+                                Command="{Binding DataContext.DeleteEntryCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                CommandParameter="{Binding DataContext.RowData.Row, RelativeSource={RelativeSource Self}}"/>
+                        </DataTemplate>
+                    </dxg:GridColumn.CellTemplate>
+                </dxg:GridColumn>
+
             </dxg:GridControl.Columns>
 
         </dxg:GridControl>

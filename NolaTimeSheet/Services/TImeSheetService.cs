@@ -84,11 +84,22 @@ namespace NolaTimeSheet.Services
         }
 
 
-        public async Task<bool> DeleteTimeEntry(Time time)
+        public async Task<bool> DeleteTimeEntry(long timeId)
         {
-            _context.Times.Remove(time);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                var existingTime = await _context.Times.FindAsync(timeId);
+                if (existingTime == null) return false;
+
+                _context.Times.Remove(existingTime);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Vu debugging... {e}");
+                throw;
+            }
         }
 
         public async Task<bool> CloseTimeEntry(Time time)

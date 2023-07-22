@@ -155,5 +155,17 @@ namespace NolaTimeSheet.ViewModels
             }
             Times.Add(new TimeViewModel(updatedTime));
         }
+
+        [GenerateCommand(Name = "DeleteEntryCommand")]
+        public async Task DeleteEntry(TimeViewModel entry)
+        {
+            var isDeleted = await _timeSheetService.DeleteTimeEntry(entry.Id);
+
+            if (isDeleted)
+            {
+                Times.Remove(entry);
+            }
+        }
+
     }
 }
