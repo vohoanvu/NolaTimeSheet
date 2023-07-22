@@ -39,6 +39,12 @@
 
             <Label Content="NOLA Timesheet Entries" Height="33" Margin="10,0,0,0"
                    HorizontalContentAlignment="Center" FontFamily="Arial Black" FontSize="22"/>
+
+            <Button 
+                Content="Close" 
+                Command="{Binding FinalizeTimeEntriesCommand}" 
+                CommandParameter="{Binding SelectedTimes}"
+                Margin="10,0,0,0" />
         </StackPanel>
 
         <Button Grid.Row="1" 
@@ -68,6 +74,13 @@
 
 
             <dxg:GridControl.Columns>
+                <dxg:GridColumn Header="" FieldName="IsSelected" Width="10">
+                    <dxg:GridColumn.EditSettings>
+                        <dxe:CheckEditSettings />
+                    </dxg:GridColumn.EditSettings>
+                </dxg:GridColumn>
+
+
                 <dxg:GridColumn Header="Project" FieldName="ProjectId" Width="30" >
                     <dxg:GridColumn.EditSettings>
                         <dxe:ComboBoxEditSettings 

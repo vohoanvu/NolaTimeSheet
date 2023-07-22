@@ -14,8 +14,21 @@ namespace NolaTimeSheet.ViewModels
         private decimal _hours;
         private DateTime _workingDate;
         private string _reference;
+        private bool _isSelected;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected == value) return;
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
 
         public long Id
         {

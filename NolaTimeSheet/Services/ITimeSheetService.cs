@@ -27,6 +27,6 @@ namespace NolaTimeSheet.Services
 
         Task<bool> DeleteTimeEntry(long timeId);
 
-        Task<bool> CloseTimeEntry(Time time);
+        Task<bool> CloseTimeEntries(List<long> timeIds);
     }
 }

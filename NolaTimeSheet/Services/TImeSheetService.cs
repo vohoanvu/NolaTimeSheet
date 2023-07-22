@@ -86,12 +86,23 @@ namespace NolaTimeSheet.Services
 
         public async Task<bool> DeleteTimeEntry(long timeId)
         {
+            var existingTime = await _context.Times.FindAsync(timeId);
+            if (existingTime == null) return false;
+
+            _context.Times.Remove(existingTime);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> CloseTimeEntries(List<long> timeIds)
+        {
             try
             {
-                var existingTime = await _context.Times.FindAsync(timeId);
-                if (existingTime == null) return false;
-
-                _context.Times.Remove(existingTime);
+                var timeEntries = _context.Times.Where(t => timeIds.Contains(t.Id));
+                foreach (var timeEntry in timeEntries)
+                {
+                    timeEntry.Closed = true;
+                }
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -100,13 +111,6 @@ namespace NolaTimeSheet.Services
                 Debug.WriteLine($"Vu debugging... {e}");
                 throw;
             }
-        }
-
-        public async Task<bool> CloseTimeEntry(Time time)
-        {
-            time.Closed = true;
-            await UpdateTimeEntry(time);
-            return true;
         }
 
         public async Task<List<Time>> FilterTimeSheet(TimeSheetFilterViewModel filter)

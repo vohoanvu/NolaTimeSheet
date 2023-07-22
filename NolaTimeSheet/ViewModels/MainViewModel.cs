@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DevExpress.Mvvm.CodeGenerators;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -42,6 +43,7 @@ namespace NolaTimeSheet.ViewModels
         public ObservableCollection<ProjectViewModel> ProjectsVm { get; set; }
         public ObservableCollection<UserViewModel> AppUsers { get; set; }
         public ObservableCollection<TimeViewModel> Times { get; set; }
+        public List<TimeViewModel> SelectedTimes => Times.Where(t => t.IsSelected).ToList();
 
         [GenerateCommand(Name = "FetchUserCommand")]
         public async Task FetchUserData()
@@ -164,6 +166,21 @@ namespace NolaTimeSheet.ViewModels
             if (isDeleted)
             {
                 Times.Remove(entry);
+            }
+        }
+
+        [GenerateCommand(Name = "FinalizeTimeEntriesCommand")]
+        public async Task CloseEntries(List<TimeViewModel> selectedEntries)
+        {
+            var closingEntries = selectedEntries.Select(x => x.Id).ToList();
+            var isClosed = await _timeSheetService.CloseTimeEntries(closingEntries);
+
+            if (isClosed)
+            {
+                foreach (var timeEntry in selectedEntries)
+                {
+                    Times.Remove(timeEntry);
+                }
             }
         }
 
